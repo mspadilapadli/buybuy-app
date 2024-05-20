@@ -1,0 +1,207 @@
+const [dataProducts, setDataProducts] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/products`, {
+                method: "GET",
+                cache: "no-store",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json(); // Mengonversi respons ke JSON
+            console.log(data); // Output data JSON dari API
+
+            setDataProducts(data);
+            setLoading(false); // Simpan data JSON ke dalam state
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    ======================
+     const [data, setData] = useState([]);
+    const [isLoading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch("http://localhost:3000/api/products")
+            .then((res) => res.json())
+            .then((data) => {
+                console.log("data products", data);
+                setData(data);
+                setLoading(false);
+            });
+    }, []);
+
+    if (isLoading) return <p>Loading...</p>;
+    if (!data) return <p>No profile data</p>;
+
+    =======================
+
+
+    import { useState, useEffect } from 'react';
+import CardProduct, { Product } from '@/components/CardProduct'; // Pastikan menyesuaikan path import dengan struktur proyek Anda
+
+interface ProductsProps {}
+
+export default function Products(props: ProductsProps) {
+    const [dataProducts, setDataProducts] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://localhost:3000/api/products`, {
+                    method: 'GET',
+                    cache: 'no-store',
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json(); // Mengonversi respons ke JSON
+                console.log(data); // Output data JSON dari API
+
+                setDataProducts(data); // Simpan data JSON ke dalam state
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []); // Empty dependency array ensures this effect runs only once on mount
+
+    return (
+        <>
+            <div className="text-xl font-bold">
+                <h1>List Products</h1>
+            </div>
+            {dataProducts.map((product) => (
+                <CardProduct key={product.id} product={product} />
+            ))}
+        </>
+    );
+}
+
+
+
+==============================
+use client
+
+
+    // const params = useParams();
+    // const [dataProduct, setDataProduct] = useState<Product | null>(null);
+    // const [isLoading, setLoading] = useState(true);
+
+    // console.log(params, "params detail");
+    // const fetchData = async () => {
+    //     try {
+    //         const response = await fetch(
+    //             `http://localhost:3000/api/products/${params.slug}`,
+    //             {
+    //                 method: "GET",
+    //                 cache: "no-store",
+    //             }
+    //         );
+
+    //         if (!response.ok) {
+    //             throw new Error("Network response was not ok");
+    //         }
+
+    //         const data = await response.json(); // Mengonversi respons ke JSON
+    //         console.log("data detail product", data.thumbnail); // Output data JSON dari API
+
+    //         setLoading(false); // Simpan data JSON ke dalam state
+    //         setDataProduct(data);
+    //     } catch (error) {
+    //         console.error("Error fetching data:", error);
+    //     }
+    // };
+
+    // useEffect(() => {
+    //     fetchData();
+    // }, []);
+
+    // if (isLoading) return <p>Loading...</p>;
+    // if (!dataProduct) return <p>No products detail data</p>;
+    //========== end use client
+
+
+
+
+
+code copy from wihslist
+================================================================================
+"use client";
+import Navbar from "@/components/Navbar";
+import { string } from "zod";
+import { Product } from "../(groupingProducts)/products/page";
+import { useEffect, useState } from "react";
+import CardWishlist from "@/components/CardWishlist";
+
+export interface dataWishlist {
+    _id: string;
+    userId: string;
+    productId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    product: Product;
+}
+
+export default function Wishlist() {
+    const [wishlist, setWishlist] = useState<dataWishlist[]>([]);
+    const [isLoading, setLoading] = useState(true);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`http://localhost:3000/api/wishlist`, {
+                method: "GET",
+                cache: "no-store",
+            });
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json(); // Mengonversi respons ke JSON
+            // console.log("data wishlist", data); // Output data JSON dari API
+
+            setLoading(false); // Simpan data JSON ke dalam state
+            setWishlist(data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    if (isLoading) return <p>Loading...</p>;
+    if (!wishlist) return <p>No products data</p>;
+
+    return (
+        <>
+            {/* <Navbar /> */}
+            <div
+                id="Projects"
+                className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5"
+            >
+                {/* <CardProduct /> */}
+                {wishlist &&
+                    wishlist.map((e: dataWishlist, i: number) => {
+                        return <CardWishlist product={e.product} key={e._id} />;
+                    })}
+            </div>
+        </>
+    );
+}
+
+===============================================================================
